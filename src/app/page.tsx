@@ -5,24 +5,19 @@ import {auth} from '@/app/firebase/config'
 import { useRouter } from 'next/navigation';
 import { signOut } from 'firebase/auth';
 import {onAuthStateChanged} from 'firebase/auth'
+import { useCookies } from 'react-cookie';
 
 export default function Home() {
   const [user] = useAuthState(auth);
   const router = useRouter()
-  const userSession = sessionStorage.getItem('user');
-
-  console.log({user})
- 
-  if (!user && !userSession){
-    router.push('/sign-up')
-  }
-  
+  const [cookies, , removeCookie] = useCookies(['userToken']);
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <button onClick={() => {
         signOut(auth)
         sessionStorage.removeItem('user')
+        removeCookie('userToken');
         }}>
         Log out
       </button>
